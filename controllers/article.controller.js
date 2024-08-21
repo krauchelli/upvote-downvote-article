@@ -8,10 +8,11 @@ exports.getAllArticles = (req, res) => {
     try {
         const articles = readData();
 
-        res.status(200).json({
-            message: 'All articles retrieved successfully!',
-            data: articles
-        });
+        res.render('article/index', { articles });
+        // res.status(200).json({
+        //     message: 'All articles retrieved successfully!',
+        //     data: articles
+        // });
     } catch (error) {
         res.json({ message: error.message });
     }
