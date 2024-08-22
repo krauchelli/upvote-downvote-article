@@ -2,11 +2,13 @@ var express = require('express');
 var router = express.Router();
 var authController = require('../controllers/auth.controller');
 
+const { isAuthenticated, redirectIfAuthenticated } = require('../middlewares/auth.middleware');
+
 //GET routes
-router.get('/login', (req, res) => {
+router.get('/login', redirectIfAuthenticated, (req, res) => {
     res.render('auth/login');
 });
-router.get('/register', (req, res) => {
+router.get('/register', redirectIfAuthenticated, (req, res) => {
     res.render('auth/register');
 });
 router.get('/logout', (req, res) => {
