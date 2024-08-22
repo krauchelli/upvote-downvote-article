@@ -1,61 +1,67 @@
 const fs = require('fs');
 const path = require('path');
 const dataPath = path.join(__dirname, '../data/articles.json');
+const articleModel = require('../models/article.model');
 
 
 // GET Controllers
-exports.getAllArticles = (req, res) => {
+exports.getAllArticles = async (req, res) => {
     try {
-        const articles = readData();
-
-        res.render('article/index', { articles });
-        // res.status(200).json({
-        //     message: 'All articles retrieved successfully!',
-        //     data: articles
-        // });
+        const articles = await articleModel.getAllArticles();
+        
+        res.status(200).json({
+            message: 'All articles retrieved successfully!',
+            data: articles
+        });
     } catch (error) {
         res.json({ message: error.message });
     }
 };
 
-exports.getSpecificArticle = (req, res) => {
+exports.getSpecificArticle = async (req, res) => {
     try {
         const { id } = req.params;
-        const articles = readData();
-        const article = articles.find(a => a.id === parseInt(id));
+        const article = await articleModel.getSpecificArticle(parseInt(id));
         if (article) {
-            res.json(article);
+            res.status(200).json({
+                message: 'Article retrieved successfully!',
+                data: article
+            });
         } else {
             res.status(404).json({ message: 'Article not found' });
         }
     } catch (error) {
         res.json({ message: error.message });
     }
-}
+};
 
 // POST Controllers
-exports.postArticle = (req, res) => {
+exports.postArticle = async (req, res) => {
    try {
     const { articleTitle, articleContent } = req.body;
-    const articles = readData();
+    const sanitizedTitle = sanitizeInput(articleTitle);
+    const sanitizedContent = sanitizeInput(articleContent);
+
+    const articles = await articleModel.getAllArticles();
 
     const articleBody = {
-        id: articles.length + 1,
-        title: articleTitle,
-        content: articleContent,
+        id: `${articles.length + 1}A${Date.now()}`,
+        title: sanitizedTitle,
+        content: sanitizedContent,
         upvotes: 0,
-        downvotes: 0
+        downvotes: 0,
+        poster: req.user.username,
+        upvotedBy: []
     };
 
     // tambahkan articleBody ke articles array, kemudian simpan ke file secara permanen
-    articles.push(articleBody);
-    writeData(articles);
+    const article = await articleModel.postArticle(articleBody);
 
-    console.log(articleBody);
+    console.log(article);
     
     res.status(201).json({
         message: 'Article added successfully!',
-        data: articleBody
+        data: article
     });
    } catch (error) {
         res.json({ message: error.message });
@@ -138,3 +144,7 @@ const writeData = (data) => {
     const stringifyData = JSON.stringify(data);
     fs.writeFileSync(dataPath, stringifyData);
 }
+
+const sanitizeInput = (input) => {
+    return input.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+};
