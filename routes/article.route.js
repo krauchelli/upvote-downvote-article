@@ -8,11 +8,11 @@ router.get('/', isAuthenticated, articleController.getAllArticles);
 router.get('/:id/details', isAuthenticated, articleController.getSpecificArticle);
 
 //POST routes
-router.post('/', articleController.postArticle);
-router.post('/:id/upvote', articleController.postUpvote);
-router.post('/:id/downvote', articleController.postDownvote);
+router.post('/', isAuthenticated, articleController.postArticle);
+router.post('/:id/upvote', isAuthenticated, articleController.postUpvote);
+router.post('/:id/downvote', isAuthenticated, articleController.postDownvote);
 
 //DELETE routes
-router.delete('/:id/delete', articleController.deleteArticle);
+router.delete('/:id/delete', isAuthenticated, articleController.deleteArticle);
 
 module.exports = router;
