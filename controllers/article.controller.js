@@ -21,7 +21,7 @@ exports.getAllArticles = async (req, res) => {
 exports.getSpecificArticle = async (req, res) => {
     try {
         const { id } = req.params;
-        const article = await articleModel.getSpecificArticle(parseInt(id));
+        const article = await articleModel.getSpecificArticle(id);
         if (article) {
             res.status(200).json({
                 message: 'Article retrieved successfully!',
@@ -68,44 +68,39 @@ exports.postArticle = async (req, res) => {
    }
 };
 
-exports.postUpvote = (req, res) => {
+exports.postUpvote = async (req, res) => {
     try {
         const { id } = req.params;
-        const articles = readData();
+        const username = req.user.username;
 
-        //validation
-        const article = articles.find(i => i.id === parseInt(id));
+        const article = await articleModel.postUpvote(id, username);
         if (article) {
-            article.upvotes++;
-            writeData(articles);
             res.status(201).json({
-                message: "Successfully voted!",
-                data: articles
-            })
+                message: "Successfully Voted!",
+                data: article
+            });
         } else {
-            res.status(404).json({message: 'Article not found'})
+            res.status(404).json({ message: `Article with id: ${id} is not found or ${username} already upvoted`});
         }
     } catch (error) {
         res.json({ message: error.message });
     }
 };
 
-exports.postDownvote = (req, res) => {
+exports.postDownvote = async (req, res) => {
     try {
         const { id } = req.params;
-        const articles = readData();
-    
-        //validation
-        const article = articles.find(i => i.id === parseInt(id));
+        const username = req.user.username;
+        const article = await articleModel.postDownvote(id, username);
+        console.log(`Article: ${article}`)
+
         if (article) {
-            article.downvotes++;
-            writeData(articles);
             res.status(201).json({
                 message: "Successfully voted!",
-                data: articles
-            })
+                data: article
+            });
         } else {
-            res.status(404).json({ message: 'Article not found'});
+            res.status(404).json({ message: `Article with id: ${id} is not found or ${username} already downvoted` });
         }
     } catch (error) {
         res.json({ message: error.message });
