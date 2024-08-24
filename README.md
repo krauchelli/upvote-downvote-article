@@ -72,6 +72,8 @@
 
 This project is about creating a cool and simple CRUD API that uses JSON for data storage and manipulation. Think of it as a mini social media platform for articles where users can interact by upvoting or downvoting content, just like giving likes or dislikes.
 
+For detailed API documentation, please refer to the [Apiary](./apiary.apib) file.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
