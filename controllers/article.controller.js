@@ -56,8 +56,6 @@ exports.postArticle = async (req, res) => {
 
     // tambahkan articleBody ke articles array, kemudian simpan ke file secara permanen
     const article = await articleModel.postArticle(articleBody);
-
-    console.log(article);
     
     res.status(201).json({
         message: 'Article added successfully!',
@@ -92,7 +90,6 @@ exports.postDownvote = async (req, res) => {
         const { id } = req.params;
         const username = req.user.username;
         const article = await articleModel.postDownvote(id, username);
-        console.log(`Article: ${article}`)
 
         if (article) {
             res.status(201).json({

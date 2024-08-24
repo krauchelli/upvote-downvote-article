@@ -17,7 +17,6 @@ exports.register = async (req, res) => {
         }
         
         const newUser = await createUser(email, name, password);
-        console.log(`New user: ${JSON.stringify(newUser)}`);
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -27,17 +26,14 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(`Email: ${email}, Password: ${password}`);
         
         const user = await findUserByEmail(email);
-        console.log(`User: ${JSON.stringify(user)}`);
         
         if (!user) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log(`Password match: ${isMatch}`);
         
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid email or password' });
