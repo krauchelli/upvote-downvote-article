@@ -3,78 +3,205 @@ HOST: https://polls.apiblueprint.org/
 
 # upvote-downvote-article
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+upvote-downvote-article is a simple API allowing users to post article and vote in them.
 
-## Questions Collection [/questions]
+## Auth Collection
 
-### List All Questions [GET]
+### Login [POST /auth/login]
++ Request (application/json)
+    + Body
+            {
+                "email": "dwiananda@admin.com",
+                "password": "dwiananda"
+            }
 
 + Response 200 (application/json)
-
-        [
+    + Body
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
+                "message": "Logged in successfully",
+                "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRVVTE3MjQ0NzIzNTc2NTciLCJlbWFpbCI6ImR3aWFuYW5kYUBhZG1pbi5jb20iLCJ1c2VybmFtZSI6ImR3aWFuYW5kYSIsImlhdCI6MTcyNDQ3ODQ4MywiZXhwIjoxNzI0NDc5MzgzfQ.Fvmjpfe9uhw_S3XEw00JM3YQ4HFjj4DVyjVK_4Hlg4c"
             }
-        ]
 
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
+### Register [POST /auth/register]
 + Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
+    + Body
+            {
+                "email": "dwiananda@admin.com",
+                "name": "dwiananda",
+                "password": "dwiananda",
+                "confirmPassword": "dwiananda"
+            }
 
 + Response 201 (application/json)
+    + Body
+            {
+                "message": "User successfully created!"
+            }
 
+### Login Page [GET /auth/login]
++ Request (application/json)
     + Headers
 
-            Location: /questions/2
-
++ Response 200 (text/html)
     + Body
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Login</title>
+            </head>
+            <body>
+                <h1>Login Page</h1>
+            </body>
+            </html>
 
+### Register Page [GET /auth/register]
++ Request (application/json)
+    + Headers
+
++ Response 200 (text/html)
+    + Body
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Register</title>
+            </head>
+            <body>
+                <h1>Register Page</h1>
+            </body>
+            </html>
+
+### Logout [GET /auth/logout]
++ Request (application/json)
+    + Headers
+
++ Response 302 (text/html)
+    + Headers
+        Location: /
+
+## Articles Collection [/questions]
+
+### Get All Articles [GET /articles]
++ Request (application/json)
+    + Headers
+
++ Response 200 (application/json)
+    + Body
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
+                "message": "All articles retrieved successfully!",
+                "data": [
                     {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
+                        "id": 1,
+                        "title": "Sebuah judul",
+                        "content": "Lorem ipsum",
+                        "upvotes": 6,
+                        "downvotes": 3
                     }
                 ]
             }
+
+### Get Specific Article [GET /articles/{id}/details]
++ Parameters
+    + id: `8A1724478560192` (string) - The ID of the article
+
++ Request (application/json)
+    + Headers
+
++ Response 200 (application/json)
+    + Body
+            {
+                "message": "Article retrieved successfully!",
+                "data": {
+                    "id": "8A1724478560192",
+                    "title": "HolyLagrange",
+                    "content": "Lorem ipsum dolon set amet",
+                    "upvotes": 0,
+                    "downvotes": 1,
+                    "poster": "dwiananda",
+                    "upvotedBy": [],
+                    "downvotedBy": [
+                        "dwiananda"
+                    ]
+                }
+            }
+
+### Post Article [POST /articles]
++ Request (application/json)
+    + Headers
+    + Body
+            {
+                "articleTitle": "string",
+                "articleContent": "string"
+            }
+
++ Response 201 (application/json)
+    + Body
+            {
+                "message": "Article added successfully!",
+                "data": {
+                    "id": "8A1724478560192",
+                    "title": "HolyLagrange",
+                    "content": "Lorem ipsum dolon set amet",
+                    "upvotes": 0,
+                    "downvotes": 0,
+                    "poster": "dwiananda",
+                    "upvotedBy": []
+                }
+            }
+
+### Upvote Article [POST /articles/{id}/upvote]
++ Parameters
+    + id: `8A1724478560192` (string) - The ID of the article
+
++ Request (application/json)
+    + Headers
+
++ Response 200 (application/json)
+    + Body
+            {
+                "message": "Successfully Voted!",
+                "data": {
+                    "id": "8A1724478560192",
+                    "title": "HolyLagrange",
+                    "content": "Lorem ipsum dolon set amet",
+                    "upvotes": 1,
+                    "downvotes": 0,
+                    "poster": "dwiananda",
+                    "upvotedBy": [
+                        "dwiananda"
+                    ]
+                }
+            }
+
+### Downvote Article [POST /articles/{id}/downvote]
++ Parameters
+    + id: `8A1724478560192` (string) - The ID of the article
+
++ Request (application/json)
+    + Headers
+
++ Response 200 (application/json)
+    + Body
+            {
+                "message": "Successfully voted!",
+                "data": {
+                    "id": "8A1724478560192",
+                    "title": "HolyLagrange",
+                    "content": "Lorem ipsum dolon set amet",
+                    "upvotes": 0,
+                    "downvotes": 1,
+                    "poster": "dwiananda",
+                    "upvotedBy": [],
+                    "downvotedBy": [
+                        "dwiananda"
+                    ]
+                }
+            }
+
+### Delete Article [DELETE /articles/{id}/delete]
++ Parameters
+    + id: `8A1724478560192` (string) - The ID of the article
+
++ Request (application/json)
+    + Headers
+
++ Response 204
